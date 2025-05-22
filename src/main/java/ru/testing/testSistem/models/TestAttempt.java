@@ -29,4 +29,7 @@ public class TestAttempt {
 
     @Enumerated(EnumType.STRING)
     private TestAttemptStatus status;
+    public Test getTest() {
+        return this.test;
+    }
 }
