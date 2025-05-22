@@ -1,0 +1,182 @@
+/* Общие стили */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Шапка */
+.header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+/* Кнопка входа */
+.login-button {
+    background-color: #3498db;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-button a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-button:hover {
+    background-color: #2980b9;
+}
+
+/* Основное содержимое */
+.main {
+    padding: 30px 0;
+}
+
+/* Секция поиска */
+.search-section {
+    margin-bottom: 40px;
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.search-section h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 22px;
+}
+
+.search-bar {
+    display: flex;
+    margin-top: 15px;
+}
+
+.search-input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #3498db;
+}
+
+.search-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover {
+    background-color: #2980b9;
+}
+
+/* Секция пройденных тестов */
+.passed-tests h2 {
+    color: #2c3e50;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.test-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.test-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.test-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.test-card h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 18px;
+}
+
+.test-card p {
+    margin-bottom: 0;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+/* Подвал (будет вставлен через Thymeleaf) */
+.footer {
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .logo {
+        margin-bottom: 15px;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .search-input {
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .search-button {
+        border-radius: 4px;
+        padding: 10px;
+    }
+}

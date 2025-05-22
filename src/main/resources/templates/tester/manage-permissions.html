@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление доступом</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 th:text="'Управление доступом: ' + ${test.title}"></h1>
+        <a th:href="@{${homeUrl}}" class="btn btn-outline-secondary">
+            <i class="btn btn-outline-secondary"></i> На главную
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Настройки приватности</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/tester/tests/{testId}/toggle-privacy(testId=${test.id})}" method="post">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="privacySwitch"
+                           th:checked="${test.isPrivate}" onchange="this.form.submit()">
+                    <label class="form-check-label" for="privacySwitch">
+                        Приватный тест (ограниченный доступ)
+                    </label>
+                </div>
+                <small class="text-muted">
+                    Когда выключено - тест доступен всем. Когда включено - только выбранным пользователям.
+                </small>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${not test.isPrivate}" class="alert alert-info mb-4">
+        <i class="bi bi-globe"></i> Этот тест <strong>доступен всем пользователям</strong>, так как не является приватным.
+    </div>
+
+    <div class="card mb-4" th:if="${test.isPrivate}">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-search"></i> Поиск пользователей для добавления</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/tester/tests/{testId}/permissions(testId=${test.id})}" method="get">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="search"
+                           placeholder="Введите имя или email" th:value="${searchQuery}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> Найти
+                    </button>
+                </div>
+            </form>
+
+            <div th:if="${not #lists.isEmpty(usersToAdd)}">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Email</th>
+                            <th>Действие</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${usersToAdd}">
+                            <td th:text="${user.username}"></td>
+                            <td th:text="${user.email}"></td>
+                            <td>
+                                <form th:action="@{/tester/tests/{testId}/permissions/grant(testId=${test.id}, userId=${user.id})}"
+                                      method="post">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-plus-circle"></i> Дать доступ
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" th:if="${test.isPrivate}">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-people-fill"></i> Пользователи с доступом</h5>
+        </div>
+             <div class="card-body">
+                <div class="table-responsive">
+                     <table class="table table-hover align-middle">
+                          <thead>
+                              <tr>
+                                <th width="40%">Имя пользователя</th>
+                                <th width="40%">Email</th>
+                                <th width="20%">Действия</th>
+                              </tr>
+                          </thead>
+                        <tbody>
+                            <tr th:each="user : ${allowedUsers}">
+                                <td th:text="${user.username}"></td>
+                                <td th:text="${user.email}"></td>
+                                <td>
+                                    <form th:action="@{/tester/tests/{testId}/permissions/revoke(testId=${test.id}, userId=${user.id})}"
+                                          method="post"
+                                          onsubmit="return confirm('Вы точно хотите отозвать доступ?')">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Отозвать доступ
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(allowedUsers)}">
+                                <td colspan="3" class="text-center text-muted">
+                                    Нет пользователей с доступом к этому тесту
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+             </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

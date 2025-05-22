@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${attempt.test.title} + ' - Результаты'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .correct-answer {
+            color: #28a745;
+        }
+        .incorrect-answer {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h1 th:text="${attempt.test.title} + ' - Результаты'"></h1>
+
+    <div class="mb-4">
+        <h4>Ваш результат:</h4>
+        <p th:text="'Набранные баллы: ' + ${attempt.score} + '/' + ${totalQuestions}"></p>
+        <p th:if="${attempt.status == T(ru.testing.testSistem.models.TestAttemptStatus).TIMEOUT}"
+           class="text-danger">Тест завершен из-за истечения времени.</p>
+    </div>
+
+    <h4>Ваши ответы:</h4>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Вопрос</th>
+            <th>Ваш ответ</th>
+            <th>Правильный ответ</th>
+            <th>Статус</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="question : ${questions}">
+            <td th:text="${question.text}"></td>
+            <td>
+
+                <div th:if="${question.questionType == T(ru.testing.testSistem.models.QuestionType).SINGLE}">
+                    <span th:each="userAnswer : ${userAnswers}"
+                          th:if="${userAnswer.question.id == question.id}">
+                        <span th:if="${userAnswer.answer != null}"
+                              th:text="${userAnswer.answer.text}"
+                              th:class="${userAnswer.isCorrect} ? 'correct-answer' : 'incorrect-answer'"></span>
+                        <span th:if="${userAnswer.answer == null}" class="text-danger">Нет ответа</span>
+                    </span>
+                </div>
+
+                <div th:if="${question.questionType == T(ru.testing.testSistem.models.QuestionType).MULTIPLE}">
+                    <div th:if="${not #lists.isEmpty(userAnswers.?[question.id == #this.question.id])}">
+                        <ul>
+                            <li th:each="userAnswer : ${userAnswers}"
+                                th:if="${userAnswer.question.id == question.id and userAnswer.answer != null}"
+                                th:text="${userAnswer.answer.text}"
+                                th:class="${userAnswer.answer.correct} ? 'correct-answer' : 'incorrect-answer'">
+                            </li>
+                        </ul>
+                    </div>
+                    <span th:if="${#lists.isEmpty(userAnswers.?[question.id == #this.question.id])}"
+                          class="text-danger">Нет ответа</span>
+                </div>
+
+                <div th:if="${question.questionType == T(ru.testing.testSistem.models.QuestionType).TEXT}">
+                    <span th:each="userAnswer : ${userAnswers}"
+                          th:if="${userAnswer.question.id == question.id and userAnswer.userTextAnswer != null}"
+                          th:text="${userAnswer.userTextAnswer}"
+                          th:class="${userAnswer.isCorrect} ? 'correct-answer' : 'incorrect-answer'">
+                    </span>
+                    <span th:if="${#lists.isEmpty(userAnswers.?[question.id == #this.question.id and #this.userTextAnswer != null])}"
+                          class="text-danger">Нет ответа</span>
+                </div>
+            </td>
+            <td>
+                <ul>
+                    <li th:each="answer : ${question.answers}"
+                        th:if="${answer.isCorrect}"
+                        th:text="${answer.text}"></li>
+                </ul>
+            </td>
+            <td>
+                <span th:if="${questionCorrectness.get(question.id)}" class="text-success">Правильно</span>
+                <span th:unless="${questionCorrectness.get(question.id)}" class="text-danger">Неправильно</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/tests/available}" class="btn btn-primary">Вернуться к списку тестов</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

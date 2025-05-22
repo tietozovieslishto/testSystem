@@ -1,0 +1,41 @@
+### Spring Boot ###
+# Игнорируем скомпилированные файлы и билды
+target/
+!**/src/main/**/target/  # кроме target внутри src/main (если нужно)
+!**/src/test/**/target/  # и src/test
+
+# Логи и дампы памяти
+*.log
+*.log.*
+logs/
+heapdump.hprof
+
+### Конфиги ###
+# Игнорируем ВСЕ файлы с секретами (ваш случай)
+application-secret.properties
+application-*.yml  # на будущее, если появятся yml-конфиги
+.env
+
+# Но разрешаем основной конфиг (должен остаться в репозитории)
+!application.properties
+
+### IDE ###
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+### Maven ###
+.mvn/wrapper/        # Игнорируем wrapper (кроме самого jar-файла)
+!.mvn/wrapper/maven-wrapper.jar
+
+# Временные файлы Maven
+pom.xml.versionsBackup
+*.releaseBackup
+*.releasesBackup
+*.versionsBackup
+
+# Кэш и другие артефакты
+dependency-reduced-pom.xml

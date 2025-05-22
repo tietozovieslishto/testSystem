@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${test.title} + ' - Вопрос ' + ${questionNumber}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3 th:text="${test.title}"></h3>
+            <div class="progress mt-2">
+                <div class="progress-bar"
+                     th:style="'width: ' + ${questionNumber * 100 / totalQuestions} + '%;'"
+                     th:text="${questionNumber} + '/' + ${totalQuestions}"></div>
+            </div>
+        </div>
+        <div th:if="${attempt.status == T(ru.testing.testSistem.models.TestAttemptStatus).COMPLETED or attempt.endTime != null}"
+             class="alert alert-warning">
+            <h4>Тест уже завершен!</h4>
+            <p>Вы не можете отвечать на вопросы завершенного теста.</p>
+            <a th:href="@{'/tests/' + ${test.id} + '/attempt/' + ${attempt.id} + '/results'}"
+               class="btn btn-primary">
+                Посмотреть результаты
+            </a>
+        </div>
+        <div th:unless="${attempt.status == T(ru.testing.testSistem.models.TestAttemptStatus).COMPLETED or attempt.endTime != null}">
+            <div class="card-body">
+                <form th:action="@{/tests/{testId}/attempt/{attemptId}/question/{questionNumber}(testId=${test.id}, attemptId=${attempt.id}, questionNumber=${questionNumber})}"
+                      method="post">
+
+                    <h4 th:text="${question.text}"></h4>
+                    <div th:if="${question.image != null}" class="mb-3">
+                        <img th:src="@{${question.image.imagePath}}" class="img-thumbnail" style="max-height: 200px;">
+                    </div>
+
+                    <div th:if="${question.questionType == T(ru.testing.testSistem.models.QuestionType).SINGLE}">
+                        <div th:each="answer : ${question.answers}" class="form-check">
+                            <input class="form-check-input" type="radio" name="answerIds" th:value="${answer.id}" id="answer-${answer.id}">
+                            <label class="form-check-label" th:for="'answer-' + ${answer.id}" th:text="${answer.text}"></label>
+                        </div>
+                    </div>
+
+                    <div th:if="${question.questionType == T(ru.testing.testSistem.models.QuestionType).MULTIPLE}">
+                        <div th:each="answer : ${question.answers}" class="form-check">
+                            <input class="form-check-input" type="checkbox" name="answerIds" th:value="${answer.id}" id="answer-${answer.id}">
+                            <label class="form-check-label" th:for="'answer-' + ${answer.id}" th:text="${answer.text}"></label>
+                        </div>
+                    </div>
+
+                    <div th:if="${question.questionType == T(ru.testing.testSistem.models.QuestionType).TEXT}">
+                        <textarea class="form-control" name="textAnswer" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">
+                        <span th:if="${questionNumber < totalQuestions}">Следующий вопрос</span>
+                        <span th:if="${questionNumber == totalQuestions}">Завершить тест</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
