@@ -256,6 +256,9 @@ public class TestTakingService {
         return questionNumber < questions.size() ? questionNumber + 1 : -1;
     }
     public String getHomeUrl(UserDetails userDetails) {
+        if (userDetails == null) {
+            return "/auth/login";
+        }
         if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return "/admin/dashboard";
         } else if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TESTER"))) {
