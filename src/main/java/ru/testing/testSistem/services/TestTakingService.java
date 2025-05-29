@@ -32,10 +32,10 @@ public class TestTakingService {
     public TestAttempt startTest(Long testId, String username) throws AccessDeniedException {
         User user = getUserByUsername(username);
         Test test = testRepository.findById(testId)
-                .orElseThrow(() -> new EntityNotFoundException("Test not found"));
+                .orElseThrow(() -> new EntityNotFoundException("тест не найден"));
 
         if (!permissionService.hasAccess(testId, user.getId())) {
-            throw new AccessDeniedException("You don't have access to this test");
+            throw new AccessDeniedException("У вас нет доступа к этому тесту");
         }
 
         TestAttempt attempt = new TestAttempt();
@@ -49,22 +49,22 @@ public class TestTakingService {
     }
    public void saveAnswer(Long attemptId, Long questionId, List<Long> answerIds, String textAnswer, User user) {
        TestAttempt attempt = attemptRepository.findByIdAndUserId(attemptId, user.getId())
-               .orElseThrow(() -> new EntityNotFoundException("Attempt not found"));
+               .orElseThrow(() -> new EntityNotFoundException("попытка не найдена"));
 
        if (attempt.getStatus() != TestAttemptStatus.IN_PROGRESS) {
-           throw new IllegalStateException("Test attempt is already completed");
+           throw new IllegalStateException("попытка завершена");
        }
 
        Question question = questionRepository.findById(questionId)
-               .orElseThrow(() -> new EntityNotFoundException("Question not found"));
+               .orElseThrow(() -> new EntityNotFoundException("вопрос не найден"));
 
        if (!question.getTest().getId().equals(attempt.getTest().getId())) {
-           throw new IllegalArgumentException("Question doesn't belong to this test");
+           throw new IllegalArgumentException("Вопрос не относится к этому тесту");
        }
 
        userAnswerRepository.deleteByAttemptIdAndQuestionId(attemptId, questionId);
 
-       boolean answerProvided = false;
+       boolean answerProvided = false; // ответ дан ?
 
        switch (question.getQuestionType()) {
            case SINGLE:
@@ -99,7 +99,7 @@ public class TestTakingService {
    }
     private void saveSingleAnswer(TestAttempt attempt, Question question, Long answerId) {
         Answer answer = answerRepository.findById(answerId)
-                .orElseThrow(() -> new EntityNotFoundException("Answer not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Ответ не найден"));
 
         UserAnswer userAnswer = new UserAnswer();
         userAnswer.setAttempt(attempt);
@@ -143,8 +143,9 @@ public class TestTakingService {
         userAnswer.setUserTextAnswer(textAnswer);
 
         boolean isCorrect = question.getAnswers().stream()
-                .filter(Answer::isCorrect)
-                .anyMatch(correctAnswer -> correctAnswer.getText().equalsIgnoreCase(textAnswer.trim()));
+                .filter(Answer::isCorrect)               //оставляем только правильные
+                .anyMatch(correctAnswer ->              // Проверяем совпадение хотя бы с одним
+                        correctAnswer.getText().equalsIgnoreCase(textAnswer.trim()));           //trim()   - Удаляем пробелы в начале/конце ответа
 
         userAnswer.setCorrect(isCorrect);
         userAnswerRepository.save(userAnswer);
@@ -161,10 +162,10 @@ public class TestTakingService {
 
     public TestAttempt completeTest(Long attemptId, User user) {
         TestAttempt attempt = attemptRepository.findByIdAndUserId(attemptId, user.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Attempt not found"));
+                .orElseThrow(() -> new EntityNotFoundException("попытка не найдена"));
 
         if (attempt.getStatus() != TestAttemptStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Test attempt is already completed");
+            throw new IllegalStateException("Тест уже завершен");
         }
 
         attempt.setEndTime(LocalDateTime.now());
@@ -179,14 +180,14 @@ public class TestTakingService {
 
     public TestAttempt getAttempt(Long attemptId, User user) {
         return attemptRepository.findByIdAndUserId(attemptId, user.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Attempt not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Попытка не найдена"));
     }
 
 
     public boolean isTimeExpired(TestAttempt attempt) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime timeoutTime = attempt.getStartTime().plusMinutes(attempt.getTest().getTimeLimitMinutes());
-        return now.isAfter(timeoutTime);
+        return now.isAfter(timeoutTime); // false если не истекло
     }
     public List<Test> searchTests(String searchTerm) {
         // Сначала ищем по названию/описанию
@@ -201,12 +202,12 @@ public class TestTakingService {
         }
 
         // Удаляем дубликаты
-        return results.stream().distinct().collect(Collectors.toList());
+        return results.stream().distinct().collect(Collectors.toList());        // distinct - удаляет дубликаты
     }
     public List<Test> getAvailableTests(String username, String search) {
         User user = getUserByUsername(username);
 
-        if (search != null && !search.trim().isEmpty()) {
+        if (search != null && !search.trim().isEmpty()) { // trim - удаляет пробелы
             return searchTests(search).stream()
                     .filter(Test::isActive)
                     .filter(test -> permissionService.hasAccess(test.getId(), user.getId()))
@@ -249,7 +250,7 @@ public class TestTakingService {
         }
 
         List<Question> questions = getTestQuestions(testId);
-        Question currentQuestion = questions.get(questionNumber - 1);
+        Question currentQuestion = questions.get(questionNumber - 1); // индексация с 0
 
         saveAnswer(attemptId, currentQuestion.getId(), answerIds, textAnswer, user);
 
@@ -266,7 +267,7 @@ public class TestTakingService {
         }
         return "/user/dashboard";
     }
-    private User getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }

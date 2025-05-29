@@ -48,7 +48,7 @@ public class RegistrationController {
            return "redirect:/auth/login";
        } catch (Exception e) {
            logger.error("Ошибка регистрации пользователя: {}", registrationDto.getUsername(), e);
-           bindingResult.reject("registration.error", e.getMessage());
+           bindingResult.reject("registration.error", e.getMessage()); // в help
            return "auth/register";
        }
    }

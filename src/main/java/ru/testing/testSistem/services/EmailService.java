@@ -19,7 +19,7 @@ public class EmailService {
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     private final JavaMailSender mailSender;
-    private final Environment env;
+    private final Environment env; // доступ к application properties
 
     public void sendVerificationEmail(User user, String token) {
         try {
@@ -45,6 +45,8 @@ public class EmailService {
             String subject = "Результаты теста: " + attempt.getTest().getTitle();
 
             //  текст письма с результатами
+            // %s - строка
+            // %d - число
             String message = String.format(
                     "Здравствуйте, %s!\n\n" +
                             "Вы завершили тест: %s\n" +

@@ -32,7 +32,7 @@ public class TestPermissionService {
 
         testPermissionRepository.findByTestIdAndUserId(testId, userId)
                 .ifPresentOrElse(
-                        permission -> permission.setAllowed(true),
+                        permission -> permission.setAllowed(true),  // permission - найденный объект
                         () -> {
                             TestPermission newPermission = new TestPermission();
                             newPermission.setTest(test);

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 import ru.testing.testSistem.models.QuestionType;
-
+//
 @Data
 public class QuestionForm {
     @NotBlank(message = "Текст вопроса обязателен")

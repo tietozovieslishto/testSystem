@@ -21,9 +21,9 @@ public class User {
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @NotBlank
-    @Email
-    @Column(nullable = false, unique = true, length = 255)
+    @NotBlank // не пустое
+    @Email // проверяет формат маил
+    @Column(nullable = false, unique = true, length = 255) // должен быть уникальным
     private String email;
 
     @NotBlank
@@ -32,15 +32,15 @@ public class User {
     private boolean enabled = true;
     private boolean emailVerified = true;
     private String verificationToken;
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime tokenExpiry;
-    @CreationTimestamp
+    @Column(columnDefinition = "TIMESTAMP") // столбец должен быть типа TIMESTAMP
+    private LocalDateTime tokenExpiry; // срок действия токена, нужен для дальнейшего расширения
+    @CreationTimestamp // авто установление даты
     private LocalDateTime createdAt;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER) // жадная загрузка
     @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+            joinColumns = @JoinColumn(name = "user_id"),  // joinColumns - столбец, ссылающийся на текущую сущность
+            inverseJoinColumns = @JoinColumn(name = "role_id")) //столбец, ссылающийся на связанную сущность
+    private Set<Role> roles = new HashSet<>(); // без дубликатов
 
     public Long getId() {
         return id;

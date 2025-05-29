@@ -14,18 +14,18 @@ public class UserAnswer {
 
     @ManyToOne
     @JoinColumn(name = "attempt_id", nullable = false)
-    private TestAttempt attempt;
+    private TestAttempt attempt; // к какой попытке относится
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
-    private Question question;
+    private Question question;      // к какому вопросу
 
     @ManyToOne
     @JoinColumn(name = "answer_id")
-    private Answer answer;
+    private Answer answer;      // какой ответ выбран
 
     @Column(columnDefinition = "TEXT")
     private String userTextAnswer;
 
-    private boolean isCorrect;
+    private boolean isCorrect;          // правильно или нет
 }

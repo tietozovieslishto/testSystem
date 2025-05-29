@@ -17,7 +17,7 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     @Query("SELECT t FROM Test t WHERE " +
             "LOWER(t.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(t.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    List<Test> findByTitleOrDescription(@Param("searchTerm") String searchTerm);
+    List<Test> findByTitleOrDescription(@Param("searchTerm") String searchTerm); // в хэлп
 
     // Поиск по дате
     @Query(value = "SELECT * FROM tests WHERE DATE(created_at) = :date", nativeQuery = true)

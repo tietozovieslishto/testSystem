@@ -84,7 +84,7 @@
         <div th:unless="${#authorization.expr('isAuthenticated()')}">
             <a th:href="@{/auth/login}" class="login-button">Войти</a>
         </div>
-        <div th:if="${#authorization.expr('isAuthenticated()')}">
+        <div th:if="${#authorization.expr('isAuthenticated()')}"> <!-- если авторизован-->
             <a th:href="@{/logout}" class="logout-button">Выйти</a>
         </div>
     </div>

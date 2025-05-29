@@ -29,7 +29,7 @@ public class TesterController {
     private final EmailService emailService;
 
     @GetMapping("/dashboard")
-    public String testerDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String testerDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) { // в хелп
         TesterDashboardDto dashboard = testerService.getTesterDashboard(userDetails.getUsername());
         model.addAttribute("tests", dashboard.getCreatedTests());
         model.addAttribute("completedTests", dashboard.getCompletedTests());
@@ -77,8 +77,8 @@ public class TesterController {
                               RedirectAttributes redirectAttributes,
                               @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
         if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.questionForm", result);
-            redirectAttributes.addFlashAttribute("questionForm", questionForm);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.questionForm", result); // сохраняет BindingResult
+            redirectAttributes.addFlashAttribute("questionForm", questionForm); // сохраняет форму
             return "redirect:/tester/tests/" + testId + "/questions";
         }
 
@@ -195,8 +195,6 @@ public class TesterController {
         model.addAttribute("test", test);
         return "tester/send-invite";
     }
-    private final UserRepository userRepository;
-    private final TestRepository testRepository;
 
     @PostMapping("/tests/{testId}/send-invite")
     public String sendTestInvitation(@PathVariable Long testId,
@@ -204,11 +202,9 @@ public class TesterController {
                                      @RequestParam(required = false) String message,
                                      @AuthenticationPrincipal UserDetails userDetails,
                                      RedirectAttributes redirectAttributes) {
-        User sender = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User sender = testerService.getUserByUsername(userDetails.getUsername());
 
-        Test test = testRepository.findById(testId)
-                .orElseThrow(() -> new ResourceNotFoundException("Test not found"));
+        Test test = testerService.getTest(testId);
 
         try {
             emailService.sendTestInvitation(sender, email, test, message);

@@ -24,10 +24,10 @@ public class TestPermission {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; //  связь с автором
+    private User user; //  кому дать доступ
 
     @Column(nullable = false)
-    private boolean allowed = true;
+    private boolean allowed = true; // разрешен ли доступ
 
     @CreationTimestamp
     private LocalDateTime createdAt;

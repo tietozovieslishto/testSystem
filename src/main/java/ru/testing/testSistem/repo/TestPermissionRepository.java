@@ -9,7 +9,6 @@ import ru.testing.testSistem.models.User;
 import java.util.List;
 import java.util.Optional;
 
-// управление разрешениями на доступ к тесту
 public interface TestPermissionRepository extends JpaRepository<TestPermission, Long> {
     Optional<TestPermission> findByTestIdAndUserId(Long testId, Long userId);
     boolean existsByTestIdAndUserIdAndAllowedTrue(Long testId, Long userId);
@@ -19,7 +18,7 @@ public interface TestPermissionRepository extends JpaRepository<TestPermission, 
 
 
 
-    // Для поиска пользователей без доступа
+    // поиск пользователей без доступа
     @Query("SELECT u FROM User u WHERE u.id NOT IN " +
             "(SELECT tp.user.id FROM TestPermission tp WHERE tp.test.id = :testId) " +
             "AND (u.username LIKE %:query% OR u.email LIKE %:query%)")

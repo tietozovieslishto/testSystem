@@ -13,7 +13,7 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String text; // текст ответа
+    private String text;
     @Column(name = "is_correct")
     private boolean correct;
     @ManyToOne

@@ -25,7 +25,7 @@ public class Question {
     @JoinColumn(name = "test_id")
     private Test test; // принадлежность к тесту
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true) // в help
     private List<Answer> answers = new ArrayList<>();  // варианты ответа
 
     @OneToOne(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)

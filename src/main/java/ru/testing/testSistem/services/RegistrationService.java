@@ -46,7 +46,7 @@ public class RegistrationService {
 
         String token = UUID.randomUUID().toString();
         user.setVerificationToken(token);
-        user.setTokenExpiry(LocalDateTime.now().plusHours(TOKEN_EXPIRATION_HOURS));
+        user.setTokenExpiry(LocalDateTime.now().plusHours(TOKEN_EXPIRATION_HOURS)); // сейчас + 24
 
         Role userRole = roleRepository.findByName("ROLE_USER")
                 .orElseGet(() -> {
@@ -56,7 +56,7 @@ public class RegistrationService {
 
         user.getRoles().add(userRole);
 
-        User savedUser = userRepository.saveAndFlush(user);
+        User savedUser = userRepository.saveAndFlush(user); // в хелп
 
         emailService.sendVerificationEmail(savedUser, token);
         logger.info("Пользователь {} успешно зарегистрирован. Ожидается подтверждение email.",
@@ -72,7 +72,7 @@ public class RegistrationService {
             throw new IllegalArgumentException("Email уже подтвержден");
         }
 
-        if (user.getTokenExpiry().isBefore(LocalDateTime.now())) {
+        if (user.getTokenExpiry().isBefore(LocalDateTime.now())) { // isBefore() Возвращает true, если tokenExpiry раньше текущего времени
             throw new IllegalArgumentException("Срок действия токена истек");
         }
         logger.info("Попытка подтверждения email с токеном: {}", token);

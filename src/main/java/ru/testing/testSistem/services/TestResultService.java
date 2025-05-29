@@ -44,8 +44,8 @@ public class TestResultService {
         List<UserAnswer> userAnswers = userAnswerRepository.findByAttemptId(attemptId);
         List<Question> questions = questionRepository.findByTestId(testId);
 
-        Map<Long, Boolean> questionCorrectness = calculateQuestionCorrectness(questions, userAnswers);
-        Map<Long, String> correctTextAnswers = getCorrectTextAnswers(questions);
+        Map<Long, Boolean> questionCorrectness = calculateQuestionCorrectness(questions, userAnswers);      //правильность каждого ответа
+        Map<Long, String> correctTextAnswers = getCorrectTextAnswers(questions);        // Нужен для показа правильных ответов
 
         return new TestResultDto(
                 attempt,
@@ -57,11 +57,11 @@ public class TestResultService {
         );
     }
 
-    private Map<Long, Boolean> calculateQuestionCorrectness(List<Question> questions, List<UserAnswer> userAnswers) {
+    private Map<Long, Boolean> calculateQuestionCorrectness(List<Question> questions, List<UserAnswer> userAnswers) {           // анализ правильности ответов
         Map<Long, Boolean> correctnessMap = new HashMap<>();
 
         for (Question question : questions) {
-            List<UserAnswer> questionUserAnswers = userAnswers.stream()
+            List<UserAnswer> questionUserAnswers = userAnswers.stream()         //берет все ответы пользователей и оставляет только относящиеся к этому вопросу
                     .filter(ua -> ua.getQuestion().getId().equals(question.getId()))
                     .collect(Collectors.toList());
 
@@ -72,25 +72,25 @@ public class TestResultService {
                     isCorrect = questionUserAnswers.stream()
                             .findFirst()
                             .map(UserAnswer::isCorrect)
-                            .orElse(false);
+                            .orElse(false);     // если ответа нет
                     break;
 
                 case MULTIPLE:
-                    List<Answer> correctAnswers = question.getAnswers().stream()
+                    List<Answer> correctAnswers = question.getAnswers().stream()        // все правильные ответы на вопрос
                             .filter(Answer::isCorrect)
                             .collect(Collectors.toList());
 
-                    List<Answer> userSelectedAnswers = questionUserAnswers.stream()
+                    List<Answer> userSelectedAnswers = questionUserAnswers.stream()         // Ответы, выбранные пользователем
                             .map(UserAnswer::getAnswer)
                             .filter(Objects::nonNull)
                             .collect(Collectors.toList());
 
-                    boolean allSelectedCorrect = userSelectedAnswers.stream()
+                    boolean allSelectedCorrect = userSelectedAnswers.stream()           // Все выбранные ответы правильные?
                             .allMatch(Answer::isCorrect);
 
-                    boolean allCorrectSelected = correctAnswers.stream()
-                            .allMatch(ca -> userSelectedAnswers.stream()
-                                    .anyMatch(ua -> ua.getId().equals(ca.getId())));
+                    boolean allCorrectSelected = correctAnswers.stream()             // Выбраны все правильные ответы?
+                            .allMatch(ca -> userSelectedAnswers.stream()                // проверяет что все элементы удовлетворяют условию
+                                    .anyMatch(ua -> ua.getId().equals(ca.getId())));            //Есть ли хотя бы один (anyMatch) выбранный пользователем ответ (ua), ID которого совпадает с ID этого правильного ответа?
 
                     isCorrect = allSelectedCorrect && allCorrectSelected;
                     break;
@@ -115,10 +115,10 @@ public class TestResultService {
                 .filter(q -> q.getQuestionType() == QuestionType.TEXT)
                 .collect(Collectors.toMap(
                         Question::getId,
-                        q -> q.getAnswers().stream()
+                        q -> q.getAnswers().stream()        //для каждого вопроса получаем поток его ответов
                                 .filter(Answer::isCorrect)
                                 .map(Answer::getText)
-                                .collect(Collectors.joining(", "))
+                                .collect(Collectors.joining(", "))      // объединяем в строку
                 ));
     }
 

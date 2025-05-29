@@ -33,7 +33,7 @@ public class Test {
     private List<Question> questions = new ArrayList<>(); // список вопросов
 
     @OneToMany(mappedBy = "test")
-    private List<TestAttempt> attempts;
+    private List<TestAttempt> attempts; // список попыток прохождения
 
     @Transient
     private Integer maxScore;

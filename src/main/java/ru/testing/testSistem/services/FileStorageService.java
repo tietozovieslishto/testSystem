@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
     public class FileStorageService {
         private final Path rootLocation; // Путь к директории для хранения файлов
 
-        public FileStorageService(@Value("${file.upload-dir}") String uploadDir) {
+        public FileStorageService(@Value("${file.upload-dir}") String uploadDir) { // получаем из application properties
             this.rootLocation = Paths.get("").toAbsolutePath().resolve("src/main/resources/static/" + uploadDir);
             init();// Инициализируем директорию при создании сервиса
         }
@@ -34,7 +34,6 @@ import java.nio.file.StandardCopyOption;
                     throw new RuntimeException("Failed to store empty file");
                 }
 
-                // Очищаем имя файла от опасных символов ../
                 String filename = StringUtils.cleanPath(customFilename);
 
                 // Проверяем, что файл не пытается выйти за пределы папки
@@ -42,7 +41,7 @@ import java.nio.file.StandardCopyOption;
                         normalize().
                         toAbsolutePath();
                 // Защита от path traversal атак
-                if (!destinationFile.getParent().equals(rootLocation.toAbsolutePath())) {
+                if (!destinationFile.getParent().equals(rootLocation.toAbsolutePath())) { // если родительская директория не совпадает с корневой то ошибка
                     throw new RuntimeException("Cannot store file outside current directory");
                 }
 

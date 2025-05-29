@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
-    boolean existsByQuestionIdAndCorrectTrue(Long questionId);
+    boolean existsByQuestionIdAndCorrectTrue(Long questionId); // существует ли хотя бы 1 правильный ответ
 }

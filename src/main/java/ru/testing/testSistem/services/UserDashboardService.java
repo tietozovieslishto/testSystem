@@ -35,7 +35,7 @@ public class UserDashboardService {
         List<TestAttempt> completedTests = testAttemptRepository
                 .findByUserIdAndStatusOrderByEndTimeDesc(admin.getId(), TestAttemptStatus.COMPLETED)
                 .stream()
-                .map(this::enrichWithMaxScore)
+                .map(this::enrichWithMaxScore)      // обогащает max баллами
                 .collect(Collectors.toList());
         return new AdminDashboardDto(admin.getUsername(), createdTests, completedTests);
     }
@@ -44,20 +44,20 @@ public class UserDashboardService {
         return testAttemptRepository.findByUserIdAndStatusOrderByEndTimeDesc(
                         userId,
                         TestAttemptStatus.COMPLETED
-                ).stream().map(this::calculateMaxScoreForAttempt)
+                ).stream().map(this::enrichWithMaxScore)        // для каждой попытки: обогащает попытку максимальными баллами
                 .collect(Collectors.toList());
     }
 
-    private TestAttempt calculateMaxScoreForAttempt(TestAttempt attempt) {
+   /* private TestAttempt calculateMaxScoreForAttempt(TestAttempt attempt) {
         return enrichWithMaxScore(attempt);
-    }
+    }*/
 
     private User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    private TestAttempt enrichWithMaxScore(TestAttempt attempt) {
+    private TestAttempt enrichWithMaxScore(TestAttempt attempt) {       // максимальный вохможный балл
         int maxScore = attempt.getTest().getQuestions().stream()
                 .mapToInt(Question::getPoints)
                 .sum();

@@ -37,7 +37,7 @@ public class TesterService {
                 .findByUserIdAndStatusOrderByEndTimeDesc(tester.getId(), TestAttemptStatus.COMPLETED)
                 .stream()
                 .map(this::enrichWithMaxScore)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); // собираем результат
 
         return new TesterDashboardDto(tester.getUsername(), createdTests, completedTests);
     }
@@ -47,7 +47,7 @@ public class TesterService {
         return testCreationService.createTest(form, author);
     }
 
-    public TestQuestionsDto getTestQuestionsData(Long testId, String username) throws AccessDeniedException {
+    public TestQuestionsDto getTestQuestionsData(Long testId, String username) throws AccessDeniedException { // данные для отображения страницы редактирования вопросов теста
         User user = getUserByUsername(username);
         checkEditPermission(user.getId(), testId);
 
@@ -69,7 +69,7 @@ public class TesterService {
     }
 
 
-    private User getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
@@ -82,12 +82,12 @@ public class TesterService {
 
     private TestAttempt enrichWithMaxScore(TestAttempt attempt) {
         int maxScore = attempt.getTest().getQuestions().stream()
-                .mapToInt(Question::getPoints)
+                .mapToInt(Question::getPoints) // преобразует каждый объект потока в int
                 .sum();
         attempt.getTest().setMaxScore(maxScore);
         return attempt;
     }
-    public void toggleTestPrivacy(Long testId, String username) throws AccessDeniedException {
+    public void toggleTestPrivacy(Long testId, String username) throws AccessDeniedException { // сменить приватность
         User user = getUserByUsername(username);
         checkEditPermission(user.getId(), testId);
 
@@ -97,7 +97,7 @@ public class TesterService {
         test.setPrivate(!test.isPrivate());
         testRepository.save(test);
     }
-    public void toggleTestStatus(Long testId, String username) throws AccessDeniedException {
+    public void toggleTestStatus(Long testId, String username) throws AccessDeniedException { // сменить активность
         User user = getUserByUsername(username);
         checkEditPermission(user.getId(), testId);
 
@@ -107,14 +107,14 @@ public class TesterService {
         test.setActive(!test.isActive());
         testRepository.save(test);
     }
-    public Test getTestForInvitation(Long testId, String username) throws AccessDeniedException {
+    public Test getTestForInvitation(Long testId, String username) throws AccessDeniedException { // получить тест для отправки приглашения
         User user = getUserByUsername(username);
         checkEditPermission(user.getId(), testId);
 
         return testRepository.findById(testId)
                 .orElseThrow(() -> new ResourceNotFoundException("Test not found"));
     }
-    public String getHomeUrl(UserDetails userDetails) {
+    public String getHomeUrl(UserDetails userDetails) { // в help
         if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return "/admin/dashboard";
         } else if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TESTER"))) {
@@ -135,7 +135,7 @@ public class TesterService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("Question not found"));
 
-        if (question.getQuestionType() == QuestionType.SINGLE && answerForm.isCorrect()) {
+        if (question.getQuestionType() == QuestionType.SINGLE && answerForm.isCorrect()) { // и
             boolean hasCorrectAnswer = answerRepository.existsByQuestionIdAndCorrectTrue(questionId);
             if (hasCorrectAnswer) {
                 throw new IllegalArgumentException(
@@ -158,9 +158,9 @@ public class TesterService {
         Test test = testRepository.findById(testId)
                 .orElseThrow(() -> new ResourceNotFoundException("Test not found"));
 
-        List<User> usersToAdd = search != null ?
-                testPermissionService.searchUsersToAdd(testId, search) :
-                List.of();
+        List<User> usersToAdd = search != null ? // если search есть
+                testPermissionService.searchUsersToAdd(testId, search) : // то это
+                List.of(); // пустой список
 
         return new TestPermissionsDto(
                 test,
@@ -180,10 +180,10 @@ public class TesterService {
         List<TestAttempt> attempts = testAttemptRepository.findByTestId(testId);
         int attemptsCount = attempts.size();
 
-        double averageScore = attempts.stream()
-                .filter(a -> a.getScore() != null)
+        double averageScore = attempts.stream()                      // средний балл
+                .filter(a -> a.getScore() != null)                   // оставляем !=0
                 .mapToInt(TestAttempt::getScore)
-                .average()
+                .average()          // вычисляет среднее
                 .orElse(0.0);
 
         List<Question> questions = questionRepository.findByTestId(testId);
@@ -193,6 +193,9 @@ public class TesterService {
 
         return new TestResultsDto(test, attemptsCount, averageScore, maxPossibleScore);
     }
-
+    public  Test getTest(Long testId){
+            return testRepository.findById(testId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Test not found"));
+    }
 
 }

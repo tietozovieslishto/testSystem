@@ -12,11 +12,11 @@ public class TestQuestionDto {
     private Test test;
     private TestAttempt attempt;
     private Question question;
-    private int questionNumber;
-    private int totalQuestions;
+    private int questionNumber;     // номер вопроса
+    private int totalQuestions;         // всего вопросов
     private boolean timeExpired;
 
-    public static TestQuestionDto timeExpired(TestAttempt attempt) {
+    public static TestQuestionDto timeExpired(TestAttempt attempt) {        //когда время кончилось создаем такой дто
         return new TestQuestionDto(
                 attempt.getTest(),
                 attempt,

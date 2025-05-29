@@ -13,9 +13,9 @@ public class QuestionImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String imagePath; // путь к файлу изображения
+    private String imagePath;
 
     @OneToOne
     @JoinColumn(name = "question_id")
-    private Question question; // принадлежность к вопросу
+    private Question question;
 }

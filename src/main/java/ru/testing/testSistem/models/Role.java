@@ -39,7 +39,9 @@ public class Role {
 
     @Override
     public boolean equals(Object o) {
+        //  Проверка на сравнение с самим собой
         if (this == o) return true;
+        //  Проверка на null и совпадение классов
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
         return Objects.equals(id, role.id) &&

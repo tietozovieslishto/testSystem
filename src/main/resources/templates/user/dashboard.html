@@ -56,7 +56,7 @@
                         <div class="card test-card h-100">
                             <div class="card-body">
                                 <h5 th:text="${attempt.test.title}"></h5>
-                                <p class="text-muted" th:text="'Дата прохождения: ' + ${#temporals.format(attempt.endTime, 'dd.MM.yyyy HH:mm')}"></p>
+                                <p class="text-muted" th:text="'Дата прохождения: ' + ${#temporals.format(attempt.endTime, 'dd.MM.yyyy HH:mm')}"></p> <!-- установка формата даты-->
 
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <span>Результат:</span>
@@ -69,7 +69,7 @@
                                                          (${attempt.score >= attempt.test.maxScore * 0.5} ? 'bg-warning' : 'bg-danger')"
                                          th:style="'width: ' + ${attempt.score * 100 / attempt.test.maxScore} + '%'"
                                          role="progressbar">
-                                        <span th:text="${#numbers.formatDecimal(attempt.score * 100 / attempt.test.maxScore, 1, 2)} + '%'"></span>
+                                        <span th:text="${#numbers.formatDecimal(attempt.score * 100 / attempt.test.maxScore, 1, 2)} + '%'"></span> <!--формат процентов -->
                                     </div>
                                 </div>
 

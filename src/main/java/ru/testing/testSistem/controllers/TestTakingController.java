@@ -12,12 +12,13 @@ import ru.testing.testSistem.DTO.TestQuestionDto;
 import ru.testing.testSistem.DTO.TestResultDto;
 import ru.testing.testSistem.models.Test;
 import ru.testing.testSistem.models.TestAttempt;
+import ru.testing.testSistem.models.User;
 import ru.testing.testSistem.services.TestResultService;
 import ru.testing.testSistem.services.TestTakingService;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-
+//
 @Controller
 @RequestMapping("/tests")
 @RequiredArgsConstructor
@@ -95,6 +96,11 @@ public class TestTakingController {
             @PathVariable Long attemptId,
             @AuthenticationPrincipal UserDetails userDetails,
             Model model) {
+        // Получаем пользователя
+        User user = testTakingService.getUserByUsername(userDetails.getUsername());
+
+        //  завершаем тест перед показом результатов
+        testTakingService.completeTest(attemptId, user);
 
         TestResultDto result = testResultService.getTestResult(testId, attemptId, userDetails.getUsername());
         model.addAttribute("attempt", result.getAttempt());

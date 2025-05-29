@@ -11,6 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
     // Проверка на админа
     boolean existsByIdAndRoles_Name(Long userId, String roleName);
-    //  поиск по токену подтверждения
+    //поиск по токену подтверждения
     Optional<User> findByVerificationToken(String verificationToken);
 }

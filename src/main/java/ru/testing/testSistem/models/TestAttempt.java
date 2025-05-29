@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "test_attempts")
+@Table(name = "test_attempts") // попытки прохождения
 @Data
 @NoArgsConstructor
 public class TestAttempt {
@@ -17,7 +17,7 @@ public class TestAttempt {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // кто проходил
 
     @ManyToOne
     @JoinColumn(name = "test_id", nullable = false)
@@ -25,7 +25,7 @@ public class TestAttempt {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Integer score;
+    private Integer score; // результат
 
     @Enumerated(EnumType.STRING)
     private TestAttemptStatus status;

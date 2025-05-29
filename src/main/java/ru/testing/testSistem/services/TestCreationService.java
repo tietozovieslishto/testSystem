@@ -58,7 +58,7 @@ public class TestCreationService {
     private void saveQuestionImage(Question question, MultipartFile image) {
         try {
             String filename = "question_" + question.getId() + "_" + System.currentTimeMillis() +
-                    "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
+                    "." + StringUtils.getFilenameExtension(image.getOriginalFilename()); // последнее это расширение
             fileStorageService.store(image, filename);
             QuestionImage questionImage = new QuestionImage();
             questionImage.setQuestion(question);

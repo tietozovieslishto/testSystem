@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TestAttemptRepository extends JpaRepository<TestAttempt, Long> {
-    Optional<TestAttempt> findByIdAndUserId(Long attemptId, Long userId);
-    List<TestAttempt> findByUserIdAndStatusOrderByEndTimeDesc(Long userId, TestAttemptStatus status);
+    Optional<TestAttempt> findByIdAndUserId(Long attemptId, Long userId); // ищет по id попытки и пользователя
+    List<TestAttempt> findByUserIdAndStatusOrderByEndTimeDesc(Long userId, TestAttemptStatus status); // ищет все  попытки пользователя с статусом + фильтрация
     List<TestAttempt> findByTestId(Long testId);
 }
